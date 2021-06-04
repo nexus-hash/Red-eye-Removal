@@ -2,6 +2,7 @@
 #include <cuda.h>
 #include "redEyeReduction.h"
 #include "cuda_runtime.h"
+#include "timer.h"
 
 #define PROFILE 1
 #define BLOCK_SIZE 256
@@ -9,9 +10,9 @@ dim3 blockSize(32, 8, 1);
 
 namespace redEyeReduction {
 	void splitChannels(Mat im, unsigned char *red, unsigned char *green, unsigned char *blue) {
-		size_t numPixels = im.rows*im.cols;
-		unsigned char *imgPtr = new unsigned char[numPixels * im.channels()];
-		unsigned char *cvPtr = im.ptr<unsigned char>(0);         // For Efficient Pixel Access
+		size_t numPixels = im.rows*im.cols;   //for each channel
+		unsigned char *imgPtr = new unsigned char[numPixels * im.channels()];  //for all three channels
+		unsigned char *cvPtr = im.ptr<unsigned char>(0);         // For Efficient Pixel Access from 0th index
 		for (size_t i = 0; i < numPixels * im.channels(); ++i) {
 			imgPtr[i] = cvPtr[i];
 		}
@@ -116,6 +117,17 @@ namespace redEyeReduction {
 
 			unsigned int bit = (dev_inputVals[idx] & (1u << pass)) >> pass;
 			atomicAdd(&dev_histogram[bit], 1);
+
+			/*int atomicAdd(int *p, int v)
+				{	
+				int old;
+				exclusive_single_thread
+				{
+				// atomically perform LD; ADD; ST ops
+				old = *p; // Load from memory
+				*p = old + v; // Store after adding v
+				}
+				return old;*/
 		}
 
 	__global__ void scan_element(unsigned int* dev_inputVals, unsigned int* dev_scaned, unsigned int base, unsigned int pass,

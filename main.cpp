@@ -5,8 +5,6 @@
 #include "timer.h"
 
 #define PROFILE 1
-#define TONEMAPPING 1
-#define SEAMCARVING 0
 #define REDEYEREDUCTION 0
 #define BLUR 0
 #define CPU 0

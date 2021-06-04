@@ -10,6 +10,5 @@ using namespace std;
 using namespace cv;
 
 namespace redEyeReduction {
-	Mat cpuRER(Mat im, Mat eyeTemplate);
 	Mat gpuRER(Mat im, Mat eyeTemplate);
 }
